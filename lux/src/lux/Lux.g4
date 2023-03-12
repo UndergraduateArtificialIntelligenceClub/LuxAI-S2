@@ -5,20 +5,20 @@ grammar Lux;
  */
 
 program: bid place+ (day night)+ EOF;
-line: expression | assignment | ifBlock | forBlock ;
+line: assignment | expression | ifBlock | forBlock ;
 
 bid: line* expression;
 place: line* expression expression;
-day: ;
-night: ;
+day: line+;
+night: line+;
 
-assignment: IDENTIFIER '=' expression;
+assignment: IDENTIFIER ' = ' expression;
 
 block: '{' line* '}';
 ifBlock: 'if ' expression block ('else' elseIfBlock);
 elseIfBlock: block | ifBlock;
 forBlock: 'for ' IDENTIFIER ' in ' expression block;
-function: TYPE IDENTIFIER '(' (expression (',' expression))? ')';
+function: IDENTIFIER '(' (expression (',' expression))? ')';
 
 expression
     : INTEGER                           #integerExpression
@@ -31,8 +31,6 @@ expression
     | expression compareOp expression   #compareExpression
     ;
 
-WS: [ \t\r\n]+ -> skip;
-
 multOp: '*' | '/';
 addOp: '+' | '-';
 compareOp: '>' | '>=' | '<' | '<=';
@@ -41,9 +39,9 @@ compareOp: '>' | '>=' | '<' | '<=';
  * LEXER
  */
 
+WS: [ \t\r\n]+ -> skip;
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 INTEGER: [0-9]+;
-TYPE: 'float' | 'integer';
 
 /*
 program        : stmt_list
